@@ -1,0 +1,9 @@
+from pydantic import BaseModel
+from typing import Optional
+
+class QueryRequest(BaseModel):
+    query: str
+    session_id: Optional[str] = "default"
+
+class QueryResponse(BaseModel):
+    answer: str
