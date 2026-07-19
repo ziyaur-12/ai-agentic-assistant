@@ -2,6 +2,9 @@ import streamlit as st
 import requests
 import uuid
 
+# ================= BACKEND URL (Ek Hi Jagah Change Karo) =================
+BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
+
 st.set_page_config(page_title="AI Research Assistant", page_icon="🤖", layout="wide")
 
 # ================= CUSTOM CSS =================
@@ -32,7 +35,6 @@ st.markdown("""
         border-right: 1px solid #21262d;
     }
 
-    /* Force ALL text everywhere to be light, no exceptions */
     .stApp * {
         color: #e6edf3 !important;
     }
@@ -49,7 +51,6 @@ st.markdown("""
         color: #58a6ff !important;
     }
 
-    /* All buttons: dark bg, light text, by default */
     .stButton button, .stFileUploader button, .stChatInput button {
         background-color: #21262d !important;
         color: #e6edf3 !important;
@@ -73,7 +74,6 @@ st.markdown("""
         color: white !important;
     }
 
-    /* File uploader dropzone area */
     .stFileUploader section {
         background-color: #161b22 !important;
         border: 1px dashed #30363d !important;
@@ -82,7 +82,6 @@ st.markdown("""
         color: #e6edf3 !important;
     }
 
-    /* Chat input */
     .stChatInput textarea {
         border-radius: 8px !important;
         border: 1px solid #30363d !important;
@@ -97,7 +96,6 @@ st.markdown("""
     }
     .stChatInput button svg { fill: white !important; }
 
-    /* Expander - target the actual details/summary HTML tags Streamlit uses */
     details {
         background-color: #161b22 !important;
         border: 1px solid #21262d !important;
@@ -160,7 +158,7 @@ with st.sidebar:
     if st.button("🗑️ Delete Current Chat", use_container_width=True):
         current_id = st.session_state.current_chat_id
         session_id = st.session_state.all_chats[current_id]["session_id"]
-        requests.delete(f"http://127.0.0.1:8000/history/{session_id}")
+        requests.delete(f"{BACKEND_URL}/history/{session_id}")
         del st.session_state.all_chats[current_id]
         if len(st.session_state.all_chats) == 0:
             new_id = str(uuid.uuid4())
@@ -185,7 +183,7 @@ with st.expander("📄 Upload Document", expanded=False):
         if st.button("Upload & Index Document"):
             with st.spinner("Uploading and indexing..."):
                 files = {"file": (uploaded_file.name, uploaded_file, "application/pdf")}
-                response = requests.post("http://127.0.0.1:8000/upload", files=files)
+                response = requests.post(f"{BACKEND_URL}/upload", files=files)
                 if response.status_code == 200:
                     st.success("✅ Document uploaded and indexed successfully!")
                 else:
@@ -210,7 +208,7 @@ if query:
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = requests.post(
-                "http://127.0.0.1:8000/query",
+                f"{BACKEND_URL}/query",
                 json={"query": query, "session_id": current_chat["session_id"]}
             )
             if response.status_code == 200:
