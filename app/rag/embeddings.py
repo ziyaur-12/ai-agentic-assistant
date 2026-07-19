@@ -1,5 +1,8 @@
-from langchain_huggingface import HuggingFaceEmbeddings
-from app.config import EMBEDDING_MODEL
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from app.config import EMBEDDING_MODEL, HUGGINGFACE_API_KEY
 
 def get_embedding_model():
-    return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    return HuggingFaceEndpointEmbeddings(
+        model=EMBEDDING_MODEL,
+        huggingfacehub_api_token=HUGGINGFACE_API_KEY
+    )

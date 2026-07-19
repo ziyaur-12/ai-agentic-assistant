@@ -4,7 +4,6 @@ langchain-community
 langchain-huggingface
 langgraph
 chromadb
-sentence-transformers
 fastapi
 uvicorn
 streamlit

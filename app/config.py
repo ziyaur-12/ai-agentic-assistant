@@ -10,6 +10,7 @@ os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT", "ai-agentic-ass
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 
 LLM_MODEL = "openai/gpt-oss-120b"
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
