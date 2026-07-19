@@ -6,6 +6,10 @@ from app.rag.splitter import split_documents
 from app.rag.vectorstore import create_vectorstore
 from app.memory.conversation_memory import get_session_memory
 import shutil
+import os
+
+os.makedirs("data/uploaded_docs", exist_ok=True)
+os.makedirs("vectordb", exist_ok=True)
 
 app = FastAPI()
 
