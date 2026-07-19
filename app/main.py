@@ -1,0 +1,37 @@
+from fastapi import FastAPI, UploadFile
+from app.schemas.models import QueryRequest, QueryResponse
+from app.agents.orchestrator import run_orchestrator
+from app.rag.loader import load_pdf
+from app.rag.splitter import split_documents
+from app.rag.vectorstore import create_vectorstore
+from app.memory.conversation_memory import get_session_memory
+import shutil
+
+app = FastAPI()
+
+@app.post("/upload")
+async def upload_doc(file: UploadFile):
+    path = f"data/uploaded_docs/{file.filename}"
+    with open(path, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    docs = load_pdf(path)
+    chunks = split_documents(docs)
+    create_vectorstore(chunks)
+    return {"status": "uploaded and indexed"}
+
+@app.post("/query", response_model=QueryResponse)
+async def query_agent(request: QueryRequest):
+    session_id = request.session_id if request.session_id else "default"
+    answer = run_orchestrator(request.query, session_id)
+    return QueryResponse(answer=answer)
+
+@app.get("/history/{session_id}")
+async def get_history(session_id: str):
+    memory = get_session_memory(session_id)
+    return {"history": memory.get_history()}
+
+@app.delete("/history/{session_id}")
+async def clear_history(session_id: str):
+    memory = get_session_memory(session_id)
+    memory.clear()
+    return {"status": "history cleared"}
