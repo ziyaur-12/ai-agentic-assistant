@@ -178,7 +178,7 @@ st.markdown('<p class="sub-header">Document-grounded Q&A with real-time web sear
 current_chat = st.session_state.all_chats[st.session_state.current_chat_id]
 
 with st.expander("📄 Upload Document", expanded=False):
-    uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+    uploaded_file = st.file_uploader("Choose a document (PDF, DOCX, or TXT)", type=["pdf", "docx", "txt"])
     if uploaded_file is not None:
         if st.button("Upload & Index Document"):
             with st.spinner("Uploading and indexing..."):

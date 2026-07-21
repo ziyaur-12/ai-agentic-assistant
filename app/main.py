@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile
 from app.schemas.models import QueryRequest, QueryResponse
 from app.agents.orchestrator import run_orchestrator
-from app.rag.loader import load_pdf
+from app.rag.loader import load_document
 from app.rag.splitter import split_documents
 from app.rag.vectorstore import create_vectorstore
 from app.memory.conversation_memory import get_session_memory
@@ -15,13 +15,20 @@ app = FastAPI()
 
 @app.post("/upload")
 async def upload_doc(file: UploadFile):
+    allowed_extensions = [".pdf", ".docx", ".txt"]
+    ext = os.path.splitext(file.filename)[1].lower()
+
+    if ext not in allowed_extensions:
+        return {"status": "error", "message": f"Unsupported file type: {ext}. Allowed: PDF, DOCX, TXT"}
+
     path = f"data/uploaded_docs/{file.filename}"
     with open(path, "wb") as f:
         shutil.copyfileobj(file.file, f)
-    docs = load_pdf(path)
+
+    docs = load_document(path)
     chunks = split_documents(docs)
     create_vectorstore(chunks)
-    return {"status": "uploaded and indexed"}
+    return {"status": "uploaded and indexed", "filename": file.filename}
 
 @app.post("/query", response_model=QueryResponse)
 async def query_agent(request: QueryRequest):
