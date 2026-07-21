@@ -3,8 +3,8 @@ import requests
 import uuid
 
 # ================= BACKEND URL (Ek Hi Jagah Change Karo) =================
-BACKEND_URL = "http://127.0.0.1:8000"
-# BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
+# BACKEND_URL = "http://127.0.0.1:8000"
+BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🤖", layout="wide")
 
