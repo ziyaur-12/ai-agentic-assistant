@@ -1,0 +1,116 @@
+{
+  "504e3c21-8062-4ab4-b3bd-74b088104afc": {
+    "title": "is candidate ke skills ke bare me batao",
+    "history": [
+      {
+        "role": "user",
+        "content": "is candidate ke skills ke bare me batao"
+      },
+      {
+        "role": "assistant",
+        "content": "**Candidate Skills Overview**\n\n**Programming Languages & Libraries**\n- C++\n- Python (including NumPy and Pandas)\n\n**Web Development Stack**\n- MERN: MongoDB, Express, React, Node.js\n\n**Databases**\n- MongoDB\n- SQL\n\n**Algorithms & Data Structures**\n- Hands‑on experience with DSA (Data Structures & Algorithms) questions\n\n**Certifications & Specialized Knowledge**\n- Cisco Networking certification  \n- Salesforce Programming Architecture  \n- Oracle Fusion Cloud Application  \n\n**Additional Technical Experience**\n- Computer‑vision projects using Python and OpenCV (real‑time face detection system)  "
+      },
+      {
+        "role": "user",
+        "content": "is candidate ke skills ke bare me batao"
+      },
+      {
+        "role": "assistant",
+        "content": "**Candidate Skill Summary**\n\n- **Programming Languages**  \n  - C++  \n  - Python (including NumPy and Pandas)\n\n- **Web Development Stack**  \n  - MERN: MongoDB, Express, React, Node.js\n\n- **Databases**  \n  - MongoDB  \n  - SQL\n\n- **Data Structures & Algorithms**  \n  - Hands‑on experience solving DSA questions\n\n- **Certifications**  \n  - Cisco Networking Certification\n\n- **Salesforce**  \n  - Salesforce programming and architecture\n\n- **Enterprise Applications**  \n  - Oracle Fusion Cloud Application\n\n- **Computer Vision**  \n  - Python and OpenCV  \n  - Developed a real‑time face detection and identification system that displays names with accuracy percentages."
+      }
+    ],
+    "created_at": "2026-07-21T13:51:34.130570"
+  },
+  "ecdce025-237a-4f4d-81af-ee6ff8834f99": {
+    "title": "skills ke bare me batao",
+    "history": [
+      {
+        "role": "user",
+        "content": "skills ke bare me batao"
+      },
+      {
+        "role": "assistant",
+        "content": "**Technical Skills Mentioned in the Document**\n\n- **Programming Languages**  \n  - C++  \n  - Python (including NumPy and Pandas)\n\n- **Web / Application Stack**  \n  - MERN Stack\n\n- **Databases**  \n  - MongoDB  \n  - SQL\n\n- **Data Structures & Algorithms**  \n  - Hands‑on experience with DSA (Data Structures and Algorithms) problems\n\n- **Networking**  \n  - Cisco Networking Certification\n\n- **Salesforce**  \n  - Salesforce Programming Architecture\n\n- **Oracle**  \n  - Oracle Fusion Cloud Application\n\n- **Image Processing / Computer Vision**  \n  - Python, OpenCV (real‑time face detection system)  "
+      },
+      {
+        "role": "user",
+        "content": "kitne hackathon me participate kiya hai"
+      },
+      {
+        "role": "assistant",
+        "content": "The requested information is not available in the provided document."
+      },
+      {
+        "role": "user",
+        "content": "is candidate ne kitne Hackathon me participate kiya hai"
+      },
+      {
+        "role": "assistant",
+        "content": "The requested information is not available in the provided document."
+      },
+      {
+        "role": "user",
+        "content": "project ke bare me"
+      },
+      {
+        "role": "assistant",
+        "content": "I’m sorry, but the requested information is not available in the provided document."
+      },
+      {
+        "role": "user",
+        "content": "candidate ke project ke bare me batao"
+      },
+      {
+        "role": "assistant",
+        "content": "The requested information is not available in the provided document."
+      },
+      {
+        "role": "user",
+        "content": "skills"
+      },
+      {
+        "role": "assistant",
+        "content": "**Technical Skills & Competencies**\n\n- **Programming Languages**  \n  - C++  \n  - Python (including NumPy and Pandas)\n\n- **Web Development**  \n  - MERN Stack\n\n- **Databases**  \n  - MongoDB  \n  - SQL\n\n- **Algorithms & Data Structures**  \n  - Hands‑on experience with DSA questions\n\n- **Networking**  \n  - Cisco Networking Certification\n\n- **Cloud & Enterprise Platforms**  \n  - Salesforce Programming Architecture  \n  - Oracle Fusion Cloud Application\n\n- **Computer Vision**  \n  - OpenCV  \n  - Developed a real‑time face‑detection system for images and live video streams\n\n- **Competitive Experience**  \n  - Participation in multiple hackathons (Hack Arya, Smart India, Shankara Global)  \n  - 2nd‑place finish in a Robo Race competition  \n\n*Source: ziyaurResume.pdf*"
+      },
+      {
+        "role": "user",
+        "content": "hackathon"
+      },
+      {
+        "role": "assistant",
+        "content": "The requested information is not available in the provided documents."
+      },
+      {
+        "role": "user",
+        "content": "is candidate ne kitne hackathon me participate kiya tha"
+      },
+      {
+        "role": "assistant",
+        "content": "I’m sorry, but the requested information is not available in the provided document."
+      }
+    ],
+    "created_at": "2026-07-21T13:54:45.464169"
+  },
+  "c183b34b-e04a-4651-bf6b-7ea1d619cb2e": {
+    "title": "is candidate ne kitne hackathon me parti",
+    "history": [
+      {
+        "role": "user",
+        "content": "is candidate ne kitne hackathon me participate kiya hai"
+      },
+      {
+        "role": "assistant",
+        "content": "The candidate has participated in a total of **four hackathons**:\n\n1. Hack Arya Verse Hackathon 2025  \n2. Hack Arya Verse Hackathon 2026  \n3. Smart India Hackathon 2025  \n4. Shankara Global Hackathon 2025  \n\n*Source: ziyaurResume.pdf*"
+      },
+      {
+        "role": "user",
+        "content": "projects  ke bare me batao"
+      },
+      {
+        "role": "assistant",
+        "content": "**Projects**\n\n| # | Project | Technology Stack | Description |\n|---|---------|------------------|-------------|\n| 1 | Real‑time Face Detection System | Python, OpenCV | Detects faces in images and live video streams, displaying the identified person’s name together with an accuracy percentage. |\n| 2 | Amazon Home Page Clone (Front‑end Web Application) | HTML, CSS, JavaScript | Replicates the structure of Amazon’s home page to create a responsive web interface that includes a structured layout, navigation bar, product sections, and other UI elements, enhancing the user experience. |"
+      }
+    ],
+    "created_at": "2026-07-21T14:01:59.075926"
+  }
+}
