@@ -7,7 +7,38 @@ import uuid
 BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🤖", layout="wide")
+# ================= AUTHENTICATION =================
+if not st.session_state.logged_in:
+    st.markdown('<p class="main-header">AI Research Assistant</p>', unsafe_allow_html=True)
+    st.markdown('<p class="sub-header">Please log in or sign up to continue</p>', unsafe_allow_html=True)
 
+    tab1, tab2 = st.tabs(["Login", "Sign Up"])
+
+    with tab1:
+        login_username = st.text_input("Username", key="login_username")
+        login_password = st.text_input("Password", type="password", key="login_password")
+        if st.button("Login"):
+            resp = requests.post(f"{BACKEND_URL}/login", json={"username": login_username, "password": login_password})
+            result = resp.json()
+            if result.get("success"):
+                st.session_state.logged_in = True
+                st.session_state.username = login_username.strip().lower()
+                st.rerun()
+            else:
+                st.error(result.get("message", "Login failed."))
+
+    with tab2:
+        signup_username = st.text_input("Choose a username", key="signup_username")
+        signup_password = st.text_input("Choose a password", type="password", key="signup_password")
+        if st.button("Sign Up"):
+            resp = requests.post(f"{BACKEND_URL}/signup", json={"username": signup_username, "password": signup_password})
+            result = resp.json()
+            if result.get("success"):
+                st.success("Account created! Please log in from the Login tab.")
+            else:
+                st.error(result.get("message", "Signup failed."))
+
+    st.stop()
 # ================= CUSTOM CSS =================
 st.markdown("""
 <style>
@@ -127,6 +158,13 @@ if "current_chat_id" not in st.session_state:
 
 # ================= SIDEBAR =================
 with st.sidebar:
+    st.markdown(f"**👤 {st.session_state.username}**")
+    if st.button("🚪 Logout", use_container_width=True):
+        st.session_state.logged_in = False
+        st.session_state.username = None
+        st.rerun()
+    st.markdown("---")
+
     st.markdown("### 🤖 AI Assistant")
     st.markdown("---")
 
@@ -139,7 +177,6 @@ with st.sidebar:
 
     st.markdown("#### 📜 Chat History")
 
-    # Backend se saari saved chats fetch karo
     try:
         sessions_response = requests.get(f"{BACKEND_URL}/sessions", timeout=10)
         saved_sessions = sessions_response.json().get("sessions", []) if sessions_response.status_code == 200 else []
@@ -151,7 +188,6 @@ with st.sidebar:
         if st.button(f"💬 {label}", key=session["session_id"], use_container_width=True):
             st.session_state.current_chat_id = session["session_id"]
             st.session_state.current_session_id = session["session_id"]
-            # Backend se poori history fetch karo
             try:
                 hist_response = requests.get(f"{BACKEND_URL}/history/{session['session_id']}", timeout=10)
                 st.session_state.current_history = hist_response.json().get("history", [])
@@ -169,7 +205,6 @@ with st.sidebar:
         st.session_state.current_session_id = new_id
         st.session_state.current_history = []
         st.rerun()
-
 # ================= MAIN AREA =================
 st.markdown('<p class="main-header">AI Research Assistant</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Document-grounded Q&A with real-time web search fallback</p>', unsafe_allow_html=True)

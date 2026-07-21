@@ -12,3 +12,4 @@ python-dotenv
 pypdf
 tavily-python
 docx2txt
+bcrypt

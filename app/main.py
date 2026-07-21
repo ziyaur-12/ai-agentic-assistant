@@ -5,6 +5,7 @@ from app.rag.loader import load_document
 from app.rag.splitter import split_documents
 from app.rag.vectorstore import create_vectorstore
 from app.memory.conversation_memory import get_session_memory, list_all_sessions
+from app.auth.users import signup, login
 import shutil
 import os
 
@@ -50,3 +51,16 @@ async def clear_history(session_id: str):
 @app.get("/sessions")
 async def get_all_sessions():
     return {"sessions": list_all_sessions()}
+from pydantic import BaseModel
+
+class AuthRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/signup")
+async def signup_route(request: AuthRequest):
+    return signup(request.username, request.password)
+
+@app.post("/login")
+async def login_route(request: AuthRequest):
+    return login(request.username, request.password)
