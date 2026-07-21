@@ -8,12 +8,15 @@ BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🤖", layout="wide")
 # ================= AUTHENTICATION =================
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "username" not in st.session_state:
+    st.session_state.username = None
+
 if not st.session_state.logged_in:
     st.markdown('<p class="main-header">AI Research Assistant</p>', unsafe_allow_html=True)
     st.markdown('<p class="sub-header">Please log in or sign up to continue</p>', unsafe_allow_html=True)
-
     tab1, tab2 = st.tabs(["Login", "Sign Up"])
-
     with tab1:
         login_username = st.text_input("Username", key="login_username")
         login_password = st.text_input("Password", type="password", key="login_password")
@@ -26,7 +29,6 @@ if not st.session_state.logged_in:
                 st.rerun()
             else:
                 st.error(result.get("message", "Login failed."))
-
     with tab2:
         signup_username = st.text_input("Choose a username", key="signup_username")
         signup_password = st.text_input("Choose a password", type="password", key="signup_password")
@@ -37,7 +39,6 @@ if not st.session_state.logged_in:
                 st.success("Account created! Please log in from the Login tab.")
             else:
                 st.error(result.get("message", "Signup failed."))
-
     st.stop()
 # ================= CUSTOM CSS =================
 st.markdown("""
