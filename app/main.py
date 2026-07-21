@@ -4,7 +4,7 @@ from app.agents.orchestrator import run_orchestrator
 from app.rag.loader import load_document
 from app.rag.splitter import split_documents
 from app.rag.vectorstore import create_vectorstore
-from app.memory.conversation_memory import get_session_memory
+from app.memory.conversation_memory import get_session_memory, list_all_sessions
 import shutil
 import os
 
@@ -27,7 +27,7 @@ async def upload_doc(file: UploadFile):
 
     docs = load_document(path)
     chunks = split_documents(docs)
-    create_vectorstore(chunks)
+    create_vectorstore(chunks, source_name=file.filename)
     return {"status": "uploaded and indexed", "filename": file.filename}
 
 @app.post("/query", response_model=QueryResponse)
@@ -46,3 +46,7 @@ async def clear_history(session_id: str):
     memory = get_session_memory(session_id)
     memory.clear()
     return {"status": "history cleared"}
+
+@app.get("/sessions")
+async def get_all_sessions():
+    return {"sessions": list_all_sessions()}

@@ -3,7 +3,8 @@ import requests
 import uuid
 
 # ================= BACKEND URL (Ek Hi Jagah Change Karo) =================
-BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
+BACKEND_URL = "http://127.0.0.1:8000"
+# BACKEND_URL = "https://ai-agentic-assistant.onrender.com"
 
 st.set_page_config(page_title="AI Research Assistant", page_icon="🤖", layout="wide")
 
@@ -118,17 +119,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ================= SESSION STATE SETUP =================
-if "all_chats" not in st.session_state:
-    st.session_state.all_chats = {}
-
 if "current_chat_id" not in st.session_state:
     new_id = str(uuid.uuid4())
-    st.session_state.all_chats[new_id] = {
-        "title": "New Chat",
-        "session_id": str(uuid.uuid4()),
-        "history": []
-    }
     st.session_state.current_chat_id = new_id
+    st.session_state.current_session_id = new_id
+    st.session_state.current_history = []
 
 # ================= SIDEBAR =================
 with st.sidebar:
@@ -137,71 +132,73 @@ with st.sidebar:
 
     if st.button("➕ New Chat", use_container_width=True):
         new_id = str(uuid.uuid4())
-        st.session_state.all_chats[new_id] = {
-            "title": "New Chat",
-            "session_id": str(uuid.uuid4()),
-            "history": []
-        }
         st.session_state.current_chat_id = new_id
+        st.session_state.current_session_id = new_id
+        st.session_state.current_history = []
         st.rerun()
 
     st.markdown("#### 📜 Chat History")
 
-    for chat_id in reversed(list(st.session_state.all_chats.keys())):
-        chat = st.session_state.all_chats[chat_id]
-        label = chat["title"][:30] + ("..." if len(chat["title"]) > 30 else "")
-        if st.button(f"💬 {label}", key=chat_id, use_container_width=True):
-            st.session_state.current_chat_id = chat_id
+    # Backend se saari saved chats fetch karo
+    try:
+        sessions_response = requests.get(f"{BACKEND_URL}/sessions", timeout=10)
+        saved_sessions = sessions_response.json().get("sessions", []) if sessions_response.status_code == 200 else []
+    except requests.exceptions.RequestException:
+        saved_sessions = []
+
+    for session in saved_sessions:
+        label = session["title"][:30] + ("..." if len(session["title"]) > 30 else "")
+        if st.button(f"💬 {label}", key=session["session_id"], use_container_width=True):
+            st.session_state.current_chat_id = session["session_id"]
+            st.session_state.current_session_id = session["session_id"]
+            # Backend se poori history fetch karo
+            try:
+                hist_response = requests.get(f"{BACKEND_URL}/history/{session['session_id']}", timeout=10)
+                st.session_state.current_history = hist_response.json().get("history", [])
+            except requests.exceptions.RequestException:
+                st.session_state.current_history = []
             st.rerun()
 
     st.markdown("---")
     if st.button("🗑️ Delete Current Chat", use_container_width=True):
-        current_id = st.session_state.current_chat_id
-        session_id = st.session_state.all_chats[current_id]["session_id"]
-        requests.delete(f"{BACKEND_URL}/history/{session_id}")
-        del st.session_state.all_chats[current_id]
-        if len(st.session_state.all_chats) == 0:
-            new_id = str(uuid.uuid4())
-            st.session_state.all_chats[new_id] = {
-                "title": "New Chat",
-                "session_id": str(uuid.uuid4()),
-                "history": []
-            }
-            st.session_state.current_chat_id = new_id
-        else:
-            st.session_state.current_chat_id = list(st.session_state.all_chats.keys())[0]
+        session_id = st.session_state.get("current_session_id")
+        if session_id:
+            requests.delete(f"{BACKEND_URL}/history/{session_id}")
+        new_id = str(uuid.uuid4())
+        st.session_state.current_chat_id = new_id
+        st.session_state.current_session_id = new_id
+        st.session_state.current_history = []
         st.rerun()
 
 # ================= MAIN AREA =================
 st.markdown('<p class="main-header">AI Research Assistant</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Document-grounded Q&A with real-time web search fallback</p>', unsafe_allow_html=True)
-current_chat = st.session_state.all_chats[st.session_state.current_chat_id]
+current_session_id = st.session_state.current_session_id
+current_history = st.session_state.current_history
 
 with st.expander("📄 Upload Document", expanded=False):
-    uploaded_file = st.file_uploader("Choose a document (PDF, DOCX, or TXT)", type=["pdf", "docx", "txt"])
-    if uploaded_file is not None:
-        if st.button("Upload & Index Document"):
-            with st.spinner("Uploading and indexing..."):
-                files = {"file": (uploaded_file.name, uploaded_file, "application/pdf")}
+   uploaded_files = st.file_uploader("Choose documents (PDF, DOCX, or TXT)", type=["pdf", "docx", "txt"], accept_multiple_files=True)
+
+if uploaded_files:
+    if st.button("Upload & Index Document(s)"):
+        for uploaded_file in uploaded_files:
+            with st.spinner(f"Uploading {uploaded_file.name}..."):
+                files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
                 response = requests.post(f"{BACKEND_URL}/upload", files=files)
                 if response.status_code == 200:
-                    st.success("✅ Document uploaded and indexed successfully!")
+                    st.success(f"✅ {uploaded_file.name} uploaded and indexed!")
                 else:
-                    st.error(f"Upload failed: {response.text}")
+                    st.error(f"Upload failed for {uploaded_file.name}: {response.text}")
 
 st.markdown("---")
 
-for msg in current_chat["history"]:
+for msg in current_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
 query = st.chat_input("Ask a question...")
 
 if query:
-    if current_chat["title"] == "New Chat":
-        current_chat["title"] = query[:40]
-
-    current_chat["history"].append({"role": "user", "content": query})
     with st.chat_message("user"):
         st.markdown(query)
 
@@ -209,12 +206,18 @@ if query:
         with st.spinner("Thinking..."):
             response = requests.post(
                 f"{BACKEND_URL}/query",
-                json={"query": query, "session_id": current_chat["session_id"]}
+                json={"query": query, "session_id": current_session_id}
             )
             if response.status_code == 200:
                 answer = response.json()["answer"]
                 st.markdown(answer)
-                current_chat["history"].append({"role": "assistant", "content": answer})
+
+                # Backend se updated history fetch karo taaki session_state sync rahe
+                try:
+                    hist_response = requests.get(f"{BACKEND_URL}/history/{current_session_id}", timeout=10)
+                    st.session_state.current_history = hist_response.json().get("history", [])
+                except requests.exceptions.RequestException:
+                    pass
             else:
                 st.error(f"Query failed: {response.text}")
 
