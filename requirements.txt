@@ -13,3 +13,4 @@ pypdf
 tavily-python
 docx2txt
 bcrypt
+fpdf2

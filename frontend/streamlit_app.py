@@ -1,6 +1,57 @@
 import streamlit as st
 import requests
 import uuid
+from fpdf import FPDF
+from datetime import datetime
+
+
+def generate_markdown(history, username="User"):
+    lines = [f"# Chat Export\n", f"**User:** {username}", f"**Exported on:** {datetime.now().strftime('%Y-%m-%d %H:%M')}\n", "---\n"]
+    for msg in history:
+        role = "🧑 You" if msg["role"] == "user" else "🤖 Assistant"
+        lines.append(f"### {role}\n{msg['content']}\n")
+    return "\n".join(lines)
+
+
+import textwrap
+
+def generate_pdf(history, username="User"):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "Chat Export", new_x="LMARGIN", new_y="NEXT")
+
+    pdf.set_font("Helvetica", "", 10)
+    pdf.cell(0, 8, f"User: {username}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 8, f"Exported on: {datetime.now().strftime('%Y-%m-%d %H:%M')}", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(5)
+
+    def write_wrapped_line(text, width=85):
+        """Text ko fixed-width lines me manually wrap karta hai aur ek ek line print karta hai"""
+        if not text.strip():
+            pdf.ln(4)
+            return
+        lines = textwrap.wrap(text, width=width, break_long_words=True, break_on_hyphens=False)
+        for line in lines:
+            pdf.cell(0, 6, line, new_x="LMARGIN", new_y="NEXT")
+
+    for msg in history:
+        role = "You" if msg["role"] == "user" else "Assistant"
+        pdf.set_font("Helvetica", "B", 11)
+        safe_role = role.encode("latin-1", "replace").decode("latin-1")
+        pdf.cell(0, 7, safe_role, new_x="LMARGIN", new_y="NEXT")
+
+        pdf.set_font("Helvetica", "", 10)
+        content = msg["content"].encode("latin-1", "replace").decode("latin-1")
+
+        for paragraph in content.split("\n"):
+            write_wrapped_line(paragraph)
+
+        pdf.ln(3)
+
+    return bytes(pdf.output(dest="S"))
 
 # ================= BACKEND URL (Ek Hi Jagah Change Karo) =================
 # BACKEND_URL = "http://127.0.0.1:8000"
@@ -231,6 +282,28 @@ st.markdown("---")
 for msg in current_history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
+
+if current_history:
+    col1, col2 = st.columns(2)
+    with col1:
+        md_content = generate_markdown(current_history, st.session_state.username)
+        st.download_button(
+            label="📥 Download as Markdown",
+            data=md_content,
+            file_name=f"chat_{current_session_id[:8]}.md",
+            mime="text/markdown",
+            use_container_width=True
+        )
+    with col2:
+        pdf_content = generate_pdf(current_history, st.session_state.username)
+        st.download_button(
+            label="📄 Download as PDF",
+            data=pdf_content,
+            file_name=f"chat_{current_session_id[:8]}.pdf",
+            mime="application/pdf",
+            use_container_width=True
+        )
+    st.markdown("---")
 
 query = st.chat_input("Ask a question...")
 
